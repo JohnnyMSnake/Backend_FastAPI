@@ -25,7 +25,7 @@ Al igual que el anterior, antes de hacer push al repositorio remoto, SIEMPRE HAG
 ===========================================================================
 pip freeze > requirements.txt
 ===========================================================================
-Esta madre indicara en el requirements.txt todos los modulos que se hayan instalados, aydua a que el punto
+Esta madre indicara en el requirements.txt todos los modulos que se hayan instalados, ayuda a que el punto
 anterior tenga funcione correctamente y todos sean felices sin errores UwU.
 
 
@@ -37,7 +37,7 @@ Para poder levantar la API, solo ejecuten el siguiente comando:
 ===========================================================================
 uvicorn app.main:app --reload
 ===========================================================================
-Los podnra en modod desarrollador y cada que hagan modfiicaciones y guarden, se reflejara al toque los cambios 
+Los pondra en modo desarrollador y cada que hagan modificaciones y guarden, se reflejara al toque los cambios 
 que hayan realizado.
 
 
@@ -45,9 +45,9 @@ que hayan realizado.
 
 
 5.- 
-Se que algunos no tienen idea, pero FastAPI ya crea una documentaciond e las APIs creadas de manera automatica y se 
-peude testear sin necesidad de usar postman (Esta madre se llama Swagger) por lo que les facilitara el testeo de 
-la API. para acceder es solo meterse a la siguiente URL:
+Se que algunos no tienen idea, pero FastAPI ya crea una documentacion de las APIs creadas de manera automatica y se 
+puede testear sin necesidad de usar postman (Esta madre se llama Swagger) por lo que les facilitara el testeo de 
+la API. Para acceder es solo meterse a la siguiente URL:
 ==========================================================================
 http://127.0.0.1:8000/docs
 ==========================================================================
