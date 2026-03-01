@@ -13,7 +13,7 @@ def procesar_post(file: UploadFile = File(...)):
     
     extension = file.filename.lower().split(".")[-1]
 
-    if extension not in ["csv", "xsxl"]:
-        raise HTTPException(status_code=400, detail="Solo se permite extensiones .csv o .xsxl")
+    if extension not in ["csv", "xlsx"]:
+        raise HTTPException(status_code=400, detail="Solo se permite extensiones .csv o .xlsx")
     
     return "Archivo aceptado"
