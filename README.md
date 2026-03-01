@@ -13,7 +13,7 @@ Cada que jalen el repositorio, siempre ejecuten el siguiente comando:
 ===========================================================================
 pip install -r requirements.txt
 ===========================================================================
-Esta madre lo que hace es instalarles todos los modulos que sean neecsarios para trabajar o 
+Esta madre lo que hace es instalarles todos los modulos que sean necesarios para trabajar o 
 les terminara tirando un error de modulos.
 
 
