@@ -1,4 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, Depends
+from app.services.validacion_service import Validacion_Service
+from app.dependencies import Validacion
 
 router = APIRouter(prefix="/procesar", tags=["Procesar"])
 
@@ -7,13 +9,5 @@ def procesar_get():
     return "funciona el endpoint"
 
 @router.post("/")
-def procesar_post(file: UploadFile = File(...)):
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Archivo invalido")
-    
-    extension = file.filename.lower().split(".")[-1]
-
-    if extension not in ["csv", "xlsx"]:
-        raise HTTPException(status_code=400, detail="Solo se permite extensiones .csv o .xlsx")
-    
-    return "Archivo aceptado"
+def procesar_post(file: UploadFile = File(...), Validar_Service: Validacion_Service = Depends(Validacion)):
+    return Validar_Service.ValidarArchivo(file)
