@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Depends
+from app.services.procesar_service import Procesar_service
 from app.services.validacion_service import Validacion_Service
 from app.dependencies import Validacion
 
@@ -10,4 +11,10 @@ def procesar_get():
 
 @router.post("/")
 def procesar_post(file: UploadFile = File(...), Validar_Service: Validacion_Service = Depends(Validacion)):
-    return Validar_Service.ValidarArchivo(file)
+    Validar_Service.ValidarArchivo(file)
+    
+    # resetear el puntero (no entendi pq se mueve al validar xd)
+    file.file.seek(0)
+    
+    procesar = Procesar_service()
+    return procesar.ProcesarArchivo(file)
