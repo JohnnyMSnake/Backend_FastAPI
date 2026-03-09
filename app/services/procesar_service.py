@@ -1,9 +1,9 @@
 import os
 import pandas as pd
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 
-class Procesar_service():
-    def ProcesarArchivo(self, file):
+class Procesar_Service():
+    def ProcesarArchivo(self, file: UploadFile):
         try:
             # Leer según la extensión
             extension = file.filename.lower().split(".")[-1]
