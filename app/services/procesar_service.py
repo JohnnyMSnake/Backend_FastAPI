@@ -1,23 +1,17 @@
 import os
 import pandas as pd
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 
-class Procesar_service():
-    def ProcesarArchivo(self, file):
-        try:
-            # Leer según la extensión
-            extension = file.filename.lower().split(".")[-1]
-            
-            if extension == "xlsx":
-                df = pd.read_excel(file.file, engine='openpyxl')
-            elif extension == "csv":
-                df = pd.read_csv(file.file)
-            else:
-                raise HTTPException(status_code=400, detail="Formato no soportado")
-                
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error al leer archivo: {str(e)}")
+from app.services.validacion_service import Validacion_Service
 
+class Procesar_Service():
+
+    def __init__(self, Validar_Service: Validacion_Service):
+        self.Validar_Service = Validar_Service
+
+    def ProcesarArchivo(self, file: UploadFile):
+        
+        df = self.Validar_Service.ValidarArchivo(file)
         try:
             # eliminar duplicados
             df = df.drop_duplicates()
