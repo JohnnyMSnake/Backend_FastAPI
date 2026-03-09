@@ -1,7 +1,9 @@
+from random import random
+
 from fastapi import APIRouter, UploadFile, File, Depends
 from app.services.procesar_service import Procesar_service
 from app.services.validacion_service import Validacion_Service
-from app.dependencies import Validacion
+from app.dependencies import Procesar, Validacion
 
 router = APIRouter(prefix="/procesar", tags=["Procesar"])
 
@@ -10,11 +12,10 @@ def procesar_get():
     return "funciona el endpoint"
 
 @router.post("/")
-def procesar_post(file: UploadFile = File(...), Validar_Service: Validacion_Service = Depends(Validacion)):
+def procesar_post(file: UploadFile = File(...), Validar_Service: Validacion_Service = Depends(Validacion), Procesar_Service: Procesar_service = Depends(Procesar)):
     Validar_Service.ValidarArchivo(file)
     
     # resetear el puntero (no entendi pq se mueve al validar xd)
     file.file.seek(0)
     
-    procesar = Procesar_service()
-    return procesar.ProcesarArchivo(file)
+    return Procesar_service.ProcesarArchivo(file)
