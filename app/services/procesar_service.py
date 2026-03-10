@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from fastapi import HTTPException, UploadFile
+from fastapi import UploadFile
 
 from app.services.validacion_service import Validacion_Service
 
@@ -103,4 +103,4 @@ class Procesar_Service():
             return resultado
             
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error al procesar datos: {str(e)}")
+            raise RuntimeError(f"Error al procesar datos: {str(e)}")

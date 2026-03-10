@@ -15,3 +15,5 @@ def procesar_post(file: UploadFile = File(...), Procesar_service: Procesar_Servi
         return Procesar_service.ProcesarArchivo(file)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
