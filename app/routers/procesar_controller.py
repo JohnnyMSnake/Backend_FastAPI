@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from app.services.procesar_service import Procesar_Service
 from app.dependencies import Procesar
 
@@ -11,5 +11,7 @@ def procesar_get():
 
 @router.post("/")
 def procesar_post(file: UploadFile = File(...), Procesar_service: Procesar_Service = Depends(Procesar)):
-    
-    return Procesar_service.ProcesarArchivo(file)
+    try:
+        return Procesar_service.ProcesarArchivo(file)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
