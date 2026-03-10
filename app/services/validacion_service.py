@@ -1,14 +1,20 @@
 from fastapi import UploadFile, HTTPException
-
+import pandas as pd
 #Service encargado de validar el arhivo
 class Validacion_Service():
-    def ValidarArchivo(self, file: UploadFile) -> str:
-        if not file or not file.filename:
-            raise HTTPException(status_code=400, detail="Archivo invalido")
-    
-        extension = file.filename.lower().split(".")[-1]
-
-        if extension not in ["csv", "xlsx"]:
-            raise HTTPException(status_code=400, detail="Solo se permite extensiones .csv o .xlsx")
+    def ValidarArchivo(self, file: UploadFile) -> pd.DataFrame:
+        try:
+            # Leer según la extensión
+            extension = file.filename.lower().split(".")[-1]
+            
+            if extension == "xlsx":
+                df = pd.read_excel(file.file, engine='openpyxl')
+            elif extension == "csv":
+                df = pd.read_csv(file.file)
+            else:
+                raise HTTPException(status_code=400, detail="Formato no soportado")
+                
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error al leer archivo: {str(e)}")
         
-        return "Archivo aceptado"
+        return df
