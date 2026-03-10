@@ -12,6 +12,7 @@ class Procesar_Service():
     def ProcesarArchivo(self, file: UploadFile):
         
         df = self.Validar_Service.ValidarArchivo(file)
+        
         try:
             # eliminar duplicados
             df = df.drop_duplicates()
@@ -102,4 +103,4 @@ class Procesar_Service():
             return resultado
             
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error al procesar datos: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error al procesar datos: {str(e)}")
