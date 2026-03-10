@@ -15,6 +15,6 @@ class Validacion_Service():
                 raise HTTPException(status_code=400, detail="Formato no soportado")
                 
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error al leer archivo: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Error al leer archivo, error {str(e)}")
         
         return df
