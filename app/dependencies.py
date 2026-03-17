@@ -1,3 +1,4 @@
+from app.services.ia_service import Ia_Service
 from app.services.procesar_service import Procesar_Service
 from .services.validacion_service import Validacion_Service
 
@@ -5,5 +6,8 @@ from .services.validacion_service import Validacion_Service
 def Validacion():
     return Validacion_Service()
 
+def Ia():
+    return Ia_Service()
+
 def Procesar():
-    return Procesar_Service(Validacion())
+    return Procesar_Service(Validacion(), Ia())

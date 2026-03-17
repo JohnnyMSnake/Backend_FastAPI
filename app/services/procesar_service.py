@@ -3,11 +3,14 @@ import pandas as pd
 from fastapi import UploadFile
 
 from app.services.validacion_service import Validacion_Service
+from app.services.ia_service import Ia_Service
 
 class Procesar_Service():
 
-    def __init__(self, Validar_Service: Validacion_Service):
+    def __init__(self, Validar_Service: Validacion_Service, Ia_Service: Ia_Service):
         self.Validar_Service = Validar_Service
+        self.Ia_Service = Ia_Service
+
 
     def ProcesarArchivo(self, file: UploadFile):
         
@@ -99,6 +102,9 @@ class Procesar_Service():
                 "ganancia_bruta": ganancia_bruta,
                 "kilos_vendidos": kilos_vendidos
             }
+
+            recomendacion = self.Ia_Service.generar_recomendacion(resultado)
+            resultado["recomendacion"] = recomendacion
 
             return resultado
             
