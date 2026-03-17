@@ -14,7 +14,7 @@ Analiza el JSON y devuelve recomendaciones claras en texto plano.
 
 Reglas:
 - No devuelvas JSON
-- Responde en texto claro y estructurado
+- Responde en texto limpio y sin formatos
 - Sé concreto y accionable
 """
 
