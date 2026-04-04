@@ -29,7 +29,11 @@ class Procesar_Service():
 
             # hacer que fecha sea datetime
             if "fecha" in df.columns:
-                df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+                #df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+                #NOTA: el formato original del excel esta volteado el mes y el dia
+                # por lo que el perro siempre detectaba todo en Enero 
+                 
+                df["fecha"] = pd.to_datetime(df["fecha"], dayfirst=True, errors="coerce")
 
             # poner todo en mayusculas
             for col in df.select_dtypes(include="object").columns:
@@ -45,6 +49,7 @@ class Procesar_Service():
                 df.groupby("CUATRIMESTRE", as_index=False)
                     .agg(IMPORTE_TOTAL=("importe", "sum"),
                         MARGEN_TOTAL=("margen", "sum"))
+                    .round(2)
                     .sort_values("CUATRIMESTRE")
             )
 
@@ -52,6 +57,7 @@ class Procesar_Service():
             margen_por_sucursal = (
                 df.groupby("nombre_sucursal", as_index=False)
                     .agg(MARGEN_TOTAL=("margen", "sum"))
+                    .round(2)
                     .sort_values("MARGEN_TOTAL", ascending=False)
             )
 
@@ -59,6 +65,7 @@ class Procesar_Service():
             importe_por_sucursal = (
                 df.groupby("nombre_sucursal", as_index=False)
                     .agg(IMPORTE_TOTAL=("importe", "sum"))
+                    .round(2)
                     .sort_values("IMPORTE_TOTAL", ascending=False)
             )
 
@@ -66,6 +73,7 @@ class Procesar_Service():
             top_clientes_margen = (
                 df.groupby("nombre_cliente", as_index=False)
                     .agg(MARGEN_TOTAL=("margen", "sum"))
+                    .round(2)
                     .sort_values("MARGEN_TOTAL", ascending=False)
                     .head(10)
             )
@@ -74,6 +82,7 @@ class Procesar_Service():
             top_vendedores_margen = (
                 df.groupby("nombre_vendedor", as_index=False)
                     .agg(MARGEN_TOTAL=("margen", "sum"))
+                    .round(2)
                     .sort_values("MARGEN_TOTAL", ascending=False)
                     .head(10)
             )
@@ -82,13 +91,14 @@ class Procesar_Service():
             margen_por_linea = (
                 df.groupby("nombre_linea", as_index=False)
                     .agg(MARGEN_TOTAL=("margen", "sum"))
+                    .round(2)
                     .sort_values("MARGEN_TOTAL", ascending=False)
             )
 
             # sacar totales
-            ganancia_bruta = df["margen"].sum()
-            kilos_vendidos = df["kilogramos"].sum()
-            importe_total = df["importe"].sum()
+            ganancia_bruta = round(df["margen"].sum(), 2)
+            kilos_vendidos = round(df["kilogramos"].sum(), 2)
+            importe_total = round(df["importe"].sum(), 2)
 
             # convertir a diccionario para enviar al frontend
             resultado = {
@@ -103,6 +113,9 @@ class Procesar_Service():
                 "kilos_vendidos": kilos_vendidos
             }
 
+            #NOTA: Siempre que se quiera depurar la info de los datos, 
+            #comentar estas 2 lineas para evitar gastar tokes
+            
             recomendacion = self.Ia_Service.generar_recomendacion(resultado)
             resultado["recomendacion"] = recomendacion
 
