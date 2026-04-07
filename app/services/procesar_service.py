@@ -21,7 +21,7 @@ class Procesar_Service():
             df = df.drop_duplicates()
 
             # los strings vacios se rellenan a sin dato y los numericos a 0
-            for col in df.select_dtypes(include="object").columns:
+            for col in df.select_dtypes(include=["object", "string"]).columns:
                 df[col] = df[col].fillna("SIN DATO")
 
             for col in df.select_dtypes(include=["number"]).columns:
@@ -36,7 +36,7 @@ class Procesar_Service():
                 df["fecha"] = pd.to_datetime(df["fecha"], dayfirst=True, errors="coerce")
 
             # poner todo en mayusculas
-            for col in df.select_dtypes(include="object").columns:
+            for col in df.select_dtypes(include=["object", "string"]).columns:
                 # evita que NaN se convierta en 'NAN' 
                 df[col] = df[col].astype(str).str.strip().str.upper()
 
@@ -116,8 +116,8 @@ class Procesar_Service():
             #NOTA: Siempre que se quiera depurar la info de los datos, 
             #comentar estas 2 lineas para evitar gastar tokes
             
-            recomendacion = self.Ia_Service.generar_recomendacion(resultado)
-            resultado["recomendacion"] = recomendacion
+            #recomendacion = self.Ia_Service.generar_recomendacion(resultado)
+            #resultado["recomendacion"] = recomendacion
 
             return resultado
             
