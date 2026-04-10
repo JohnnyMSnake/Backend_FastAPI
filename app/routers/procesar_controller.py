@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from app.schemas.response_schema import respuesta_total
 from app.services.procesar_service import Procesar_Service
 from app.dependencies import Procesar
 
@@ -9,8 +10,9 @@ router = APIRouter(prefix="/procesar", tags=["Procesar"])
 def procesar_get():
     return "funciona el endpoint"
 
-@router.post("/")
-def procesar_post(file: UploadFile = File(...), Procesar_service: Procesar_Service = Depends(Procesar)):
+@router.post("/", response_model=respuesta_total)
+def procesar_post(file: UploadFile = File(...),
+                  Procesar_service: Procesar_Service = Depends(Procesar)) -> respuesta_total:
     try:
         return Procesar_service.ProcesarArchivo(file)
     except ValueError as e:

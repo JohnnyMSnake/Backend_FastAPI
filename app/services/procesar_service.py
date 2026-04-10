@@ -1,7 +1,7 @@
-import os
 import pandas as pd
 from fastapi import UploadFile
 
+from app.schemas.response_schema import respuesta_total
 from app.services.validacion_service import Validacion_Service
 from app.services.ia_service import Ia_Service
 
@@ -100,24 +100,23 @@ class Procesar_Service():
             kilos_vendidos = round(df["kilogramos"].sum(), 2)
             importe_total = round(df["importe"].sum(), 2)
 
-            # convertir a diccionario para enviar al frontend
-            resultado = {
-                "importe_margen_cuatrimestre": importe_margen_cuatrimestre.to_dict(orient="records"),
-                "margen_por_sucursal": margen_por_sucursal.to_dict(orient="records"),
-                "importe_por_sucursal": importe_por_sucursal.to_dict(orient="records"),
-                "top_clientes_margen": top_clientes_margen.to_dict(orient="records"),
-                "top_vendedores_margen": top_vendedores_margen.to_dict(orient="records"),
-                "margen_por_linea": margen_por_linea.to_dict(orient="records"),
-                "importe_total": importe_total,
-                "ganancia_bruta": ganancia_bruta,
-                "kilos_vendidos": kilos_vendidos
-            }
+            # convertir al schema de respuesta_total para que se pueda validar y consumir al frontend
+            resultado = respuesta_total(importe_margen_cuatrimestre=importe_margen_cuatrimestre.to_dict(orient="records"),
+                            margen_por_sucursal= margen_por_sucursal.to_dict(orient="records"),
+                            importe_por_sucursal= importe_por_sucursal.to_dict(orient="records"),
+                            top_clientes_margen= top_clientes_margen.to_dict(orient="records"),
+                            top_vendedores_margen= top_vendedores_margen.to_dict(orient="records"),
+                            margen_por_linea= margen_por_linea.to_dict(orient="records"),
+                            importe_total= importe_total,
+                            ganancia_bruta= ganancia_bruta,
+                            kilos_vendidos= kilos_vendidos)
 
             #NOTA: Siempre que se quiera depurar la info de los datos, 
             #comentar estas 2 lineas para evitar gastar tokes
             
             #recomendacion = self.Ia_Service.generar_recomendacion(resultado)
-            #resultado["recomendacion"] = recomendacion
+            #resultado.recomendacion = recomendacion
+            
 
             return resultado
             
