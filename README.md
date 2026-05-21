@@ -119,6 +119,7 @@ Este backend muestra experiencia en:
 - La API permite archivos CSV con distintas codificaciones comunes.
 - El procesamiento considera fechas con formato día/mes para evitar errores de interpretación.
 - La documentación automática de FastAPI facilita probar la API sin Postman.
+- El CORS se controla por entorno con `CORS_ORIGINS` y, si hace falta, `CORS_ALLOW_ORIGIN_REGEX`; en producción el `Origin` debe coincidir exactamente con uno permitido.
 
 ## Comandos rápidos
 
