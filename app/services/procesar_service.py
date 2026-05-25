@@ -118,7 +118,7 @@ class Procesar_Service():
             #resultado.recomendacion = recomendacion
             
 
-            return resultado
+            return resultado.model_dump()
             
         except Exception as e:
             raise RuntimeError(f"Error al procesar datos: {str(e)}")

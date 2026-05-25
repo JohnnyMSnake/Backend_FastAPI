@@ -11,4 +11,5 @@ settings = Settings()
 # Posibles rutas a manejar uwu
 ORIGINS = [
     "http://localhost:3000",  # frontend en el localhost
+    "https://frontend-nextjs-one-rho.vercel.app/" #frontend produccion
 ]

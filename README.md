@@ -1,55 +1,109 @@
-1.- Si es la primera vez que jalas el repositorio, siempre crea tu venv:
-========================================================================
+**Proyecto**
 
-## python -m venv venv
+- **Nombre:** Backend_FastAPI — API para procesar archivos de ventas y calcular métricas.
 
----
+**Resumen**
 
+- **Descripción:** Servicio FastAPI que recibe un archivo (CSV/XLSX), valida y normaliza los datos, calcula resúmenes (importe, margen, kilos) por cuatrimestre, sucursal, línea, top clientes/vendedores, y devuelve un objeto JSON con las métricas. Opcionalmente genera recomendaciones usando un servicio externo de IA.
 
+**Estructura del repositorio**
 
-2.- Cada que jalen el repositorio, siempre ejecuten el siguiente comando:
-=========================================================================
+- **`app/`**: Código de la aplicación.
 
-## pip install -r requirements.txt
+  - [app/main.py](app/main.py): Punto de entrada y registro de routers.
+  - [app/routers/procesar_controller.py](app/routers/procesar_controller.py): Endpoint `/procesar` (GET, POST).
+  - [app/services/validacion_service.py](app/services/validacion_service.py): Lectura y validación de archivos (CSV/XLSX).
+  - [app/services/procesar_service.py](app/services/procesar_service.py): Lógica de procesamiento y generación de resúmenes.
+  - [app/services/ia_service.py](app/services/ia_service.py): Cliente opcional para generar recomendaciones (usa `GROQ_API_KEY`).
+  - [app/schemas/response_schema.py](app/schemas/response_schema.py): Schemas Pydantic de la respuesta.
+  - [app/core/config.py](app/core/config.py): Configuración (CORS, variables de entorno).
+  - [app/core/cors.py](app/core/cors.py): Middleware CORS.
+  - [app/dependencies.py](app/dependencies.py): Fábrica de dependencias (inyección manual).
+- **`tests/`**: Tests unitarios y fixtures (usar `pytest`).
 
-Esta madre lo que hace es instalarles todos los modulos que sean necesarios para trabajar o
-les terminara tirando un error de modulos.
+**Requisitos**
 
----
+- **Python:** 3.10+ (recomendado).
+- **Dependencias:** instalar con `pip install -r requirements.txt`.
 
+**Instalación rápida**
 
+- Crear y activar entorno virtual:
 
-3.- Al igual que el anterior, antes de hacer push al repositorio remoto, SIEMPRE HAGAN ESTE COMANDO ANTES DE:
-=============================================================================================================
+```
+python -m venv venv
+venv\Scripts\Activate.ps1   # Windows PowerShell
+```
 
-## pip freeze > requirements.txt
+- Instalar dependencias:
 
-Esta madre indicara en el requirements.txt todos los modulos que se hayan instalados, ayuda a que el punto
-anterior tenga funcione correctamente y todos sean felices sin errores UwU.
+```
+pip install -r requirements.txt
+```
 
----
+**Ejecución**
 
+- Levantar la API en modo desarrollo:
 
+```
+uvicorn app.main:app --reload
+```
 
-4.- Para poder levantar la API, solo ejecuten el siguiente comando:
-===================================================================
+- Documentación interactiva (Swagger): http://127.0.0.1:8000/docs
 
-## uvicorn app.main:app --reload
+**Endpoints principales**
 
-Los pondra en modo desarrollador y cada que hagan modificaciones y guarden, se reflejara al toque los cambios
-que hayan realizado.
+- **GET** `/procesar/` — Salud básico. (Ver [app/routers/procesar_controller.py](app/routers/procesar_controller.py))
+- **POST** `/procesar/` — Subir archivo (`multipart/form-data`, campo `file`). Responde con el schema `respuesta_total` definido en [app/schemas/response_schema.py](app/schemas/response_schema.py).
 
----
+Formato esperado: CSV o XLSX. Si el formato no es soportado, se devuelve error 400.
 
+**Descripción de servicios clave**
 
+- **`Validacion_Service`** ([app/services/validacion_service.py](app/services/validacion_service.py)): Lee el archivo según extensión (`.xlsx` con `openpyxl`, `.csv` probando varias codificaciones) y devuelve un `pandas.DataFrame`.
+- **`Procesar_Service`** ([app/services/procesar_service.py](app/services/procesar_service.py)): Normaliza datos (rellena NaN, mayúsculas, parsea fecha con `dayfirst=True`), elimina duplicados y calcula:
+  - `importe_margen_cuatrimestre`: importe y margen por cuatrimestre (1: ene-abr, 2: may-ago, 3: sep-dic).
+  - `margen_por_sucursal`, `importe_por_sucursal`.
+  - `top_clientes_margen`, `top_vendedores_margen` (top 10).
+  - `margen_por_linea`.
+  - Totales: `importe_total`, `ganancia_bruta`, `kilos_vendidos`.
+    Devuelve un objeto validado por `respuesta_total`.
+- **`Ia_Service`** ([app/services/ia_service.py](app/services/ia_service.py)): Cliente Groq para generar recomendaciones a partir del JSON de resultado. Para activarlo configure la variable `GROQ_API_KEY` en el entorno. Si no está disponible, la generación de recomendación está comentada por defecto.
 
-5.- Se que algunos no tienen idea, pero FastAPI ya crea una documentacion de las APIs creadas de manera automatica y se
-puede testear sin necesidad de usar postman (Esta madre se llama Swagger) por lo que les facilitara el testeo de
-la API. Para acceder es solo meterse a la siguiente URL:
-========================================================
+**Schema de respuesta**
 
-## http://127.0.0.1:8000/docs
+- Ver [app/schemas/response_schema.py](app/schemas/response_schema.py). Campos principales:
+  - `importe_margen_cuatrimestre`: lista con `{CUATRIMESTRE, IMPORTE_TOTAL, MARGEN_TOTAL}`
+  - `margen_por_sucursal`, `importe_por_sucursal`: listas por `nombre_sucursal` con totales.
+  - `top_clientes_margen`, `top_vendedores_margen`: listas con `MARGEN_TOTAL`.
+  - `margen_por_linea`: lista por `nombre_linea`.
+  - `importe_total`, `ganancia_bruta`, `kilos_vendidos`: totales numéricos.
+  - `recomendacion`: texto opcional generado por IA.
 
-Es bastante intuitivo de usar, en caso de que no entiendan que carajos, preguntenle a GPT como se usa.
+**Configuración y CORS**
+
+- Orígenes permitidos en [app/core/config.py](app/core/config.py). Ajustar `ORIGINS` si el frontend se sirve desde otra URL.
+
+**Tests**
+
+- Ejecutar tests con `pytest` desde la raíz del proyecto:
+
+```
+pytest -q
+```
+
+- Los tests usan fixtures en `tests/fixtures/` y cubren:
+  - Validación de lectura de archivos (`tests/unit/test_validacion_service.py`).
+  - Cálculos y eliminación de duplicados (`tests/unit/test_procesar_service.py`).
+
+**Notas y recomendaciones**
+
+- Para habilitar recomendaciones IA, exportar la variable de entorno `GROQ_API_KEY` (por ejemplo en Windows PowerShell):
+
+```
+$env:GROQ_API_KEY = "tu_api_key"
+```
+
+- Mantener `requirements.txt` actualizado con `pip freeze > requirements.txt` antes de push.
 
 ---
